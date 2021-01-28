@@ -9,7 +9,6 @@ require('dotenv').config();
     await driver.get(process.env.SITE);
 
     await xlsxFile(process.env.EXCEL).then(async (rows) => {
-        
         for (i in rows){
             const account = await getData(process.env.EXCEL, i);
             await logIn(driver, account);
@@ -30,7 +29,6 @@ async function getData(data, i){
             pass = rows[i][j];                  
         }
     };
-
     return {
         'email' :email,
         'pass' :pass
@@ -40,10 +38,8 @@ async function getData(data, i){
 async function logIn(driver, account){
     await driver.findElement(By.id('emailAddress')).sendKeys(account.email);
     await driver.findElement(By.id('password')).sendKeys(account.pass, Key.RETURN);
-    await driver.sleep(1000);
-    
-    await driver.findElement(By.xpath("//*[@id='bs-example-navbar-collapse-1']/ul/li/a")).click();
-    await driver.findElement(By.xpath("//*[@id='bs-example-navbar-collapse-1']/ul/li/ul/li/a")).click();
-    await driver.sleep(1000);
-
+    if(await driver.getCurrentUrl() == "https://sipupa.fhp-edulaw.com/login"){
+        console.log("email ini " + account.email + " tidak dapat login");
+    }
+    await driver.get("https://sipupa.fhp-edulaw.com/logout");
 }
